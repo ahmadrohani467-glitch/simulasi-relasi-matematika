@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Relasi Matematika - Ibukota dari Negara</title>
+    <style>
+        * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f8fafc; color: #1e293b; min-height: 100vh; padding-bottom: 3rem; }
+        header { background-color: #4f46e5; color: white; padding: 1rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .header-container { max-width: 64rem; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .badge { background-color: #4338ca; color: #e0e7ff; font-size: 0.875rem; padding: 0.25rem 0.75rem; border: 1px solid #6366f1; border-radius: 9999px; }
+        
+        main { max-width: 64rem; margin: 0 auto; padding: 0 1rem; }
+        .card { background-color: white; border-radius: 0.75rem; padding: 1.5rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+        .hidden { display: none !important; }
+
+        .input-group { margin-bottom: 1rem; }
+        .input-group label { display: block; font-size: 0.875rem; font-weight: 500; color: #334155; margin-bottom: 0.25rem; }
+        .input-control { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.875rem; outline: none; }
+        .input-control:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .mode-card { display: flex; flex-direction: column; justify-content: space-between; }
+        .icon-box { width: 3rem; height: 3rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 1rem; font-weight: bold; }
+
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; font-size: 0.875rem; }
+        .btn-indigo { background-color: #4f46e5; color: white; }
+        .btn-indigo:hover { background-color: #4338ca; }
+        .btn-emerald { background-color: #059669; color: white; }
+        .btn-emerald:hover { background-color: #047857; }
+        .btn-amber { background-color: #d97706; color: white; }
+        .btn-amber:hover { background-color: #b45309; }
+        .btn-slate { background-color: #e2e8f0; color: #334155; }
+        .btn-slate:hover { background-color: #cbd5e1; }
+
+        /* Diagram Panah */
+        .panah-container { position: relative; display: flex; justify-content: space-between; align-items: center; max-width: 40rem; margin: 0 auto; min-height: 380px; padding: 1rem; }
+        .himpunan-box { width: 11rem; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 1rem; padding: 1rem; z-index: 20; display: flex; flex-direction: column; gap: 0.5rem; }
+        .btn-item { width: 100%; text-align: left; padding: 0.5rem 0.75rem; background-color: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; }
+        .btn-item.active { border-color: #6366f1; background-color: #e0e7ff; color: #3730a3; font-weight: 600; }
+
+        /* Diagram Kartesius */
+        .kartesius-cell { width: 4rem; height: 4rem; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; }
+        .kartesius-cell:hover { background-color: #f1f5f9; }
+        .dot { width: 1rem; height: 1rem; border-radius: 9999px; background-color: #10b981; animation: pulse 1.5s infinite; z-index: 30; }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Modal */
+        .modal { position: fixed; inset: 0; background-color: rgba(15,23,42,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
+        .modal-content { background-color: white; border-radius: 1rem; max-width: 28rem; width: 100%; padding: 1.5rem; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <h1 style="font-size:1.25rem; font-weight:bold; display:flex; align-items:center; gap:0.5rem;">
+                ➔ Simulasi Relasi Matematika
+            </h1>
+            <span class="badge">Ibukota dari</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- Halaman Utama / Navigation Panel -->
+        <div id="section-home">
+            <div class="card">
+                <h2 style="font-size:1.125rem; font-weight:bold; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                    🪪 Identitas Siswa
+                </h2>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+                    <div class="input-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="input-nama" placeholder="Masukkan nama Anda..." class="input-control">
+                    </div>
+                    <div class="input-group">
+                        <label>Kelas</label>
+                        <input type="text" id="input-kelas" placeholder="Contoh: 8A" class="input-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="card mode-card">
+                    <div>
+                        <div class="icon-box" style="background-color:#e0e7ff; color:#4f46e5;">➔</div>
+                        <h3 style="font-weight:bold; margin-bottom:0.5rem;">1. Diagram Panah</h3>
+                        <p style="font-size:0.875rem; color:#64748b; margin-bottom:1rem;">Hubungkan elemen Himpunan A (Ibukota) ke Himpunan B (Negara) menggunakan garis panah interaktif.</p>
+                    </div>
+                    <button onclick="showSection('panah')" class="btn btn-indigo" style="width:100%;">Masuk Simulasi</button>
+                </div>
+
+                <div class="card mode-card">
+                    <div>
+                        <div class="icon-box" style="background-color:#d1fae5; color:#059669;">📈</div>
+                        <h3 style="font-weight:bold; margin-bottom:0.5rem;">2. Diagram Kartesius</h3>
+                        <p style="font-size:0.875rem; color:#64748b; margin-bottom:1rem;">Tentukan titik perpotongan koordinat Sumbu X (Ibukota) dan Sumbu Y (Negara) lengkap dengan garis terhubung.</p>
+                    </div>
+                    <button onclick="showSection('kartesius')" class="btn btn-emerald" style="width:100%;">Masuk Simulasi</button>
+                </div>
+
+                <div class="card mode-card">
+                    <div>
+                        <div class="icon-box" style="background-color:#fef3c7; color:#d97706;">📋</div>
+                        <h3 style="font-weight:bold; margin-bottom:0.5rem;">3. Pasangan Berurutan</h3>
+                        <p style="font-size:0.875rem; color:#64748b; margin-bottom:1rem;">Pilih himpunan pasangan berurutan yang menyatakan relasi (Ibukota, Negara) secara akurat.</p>
+                    </div>
+                    <button onclick="showSection('pasangan')" class="btn btn-amber" style="width:100%;">Masuk Simulasi</button>
+                </div>
+            </div>
+
+            <div class="card" style="background-color:#0f172a; color:white; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-top:1.5rem;">
+                <div>
+                    <h3 style="font-weight:bold; font-size:1.125rem;">Siap Memeriksa Semua Jawaban?</h3>
+                    <p style="font-size:0.875rem; color:#94a3b8;">Skor dari ketiga mode akan dievaluasi dan dikirim langsung ke Google Sheets Anda.</p>
+                </div>
+                <button onclick="periksaSemuaJawaban()" class="btn" style="background-color:#6366f1; color:white; padding:0.75rem 1.5rem; font-size:1rem; border-radius:0.75rem;">
+                    🚀 Periksa & Kirim Hasil
+                </button>
+            </div>
+        </div>
+
+        <!-- Section 1: Diagram Panah -->
+        <div id="section-panah" class="hidden">
+            <button onclick="showSection('home')" class="btn btn-slate" style="margin-bottom:1rem;">
+                ⬅️ Kembali ke Menu Utama
+            </button>
+            <div class="card">
+                <h2 style="font-weight:bold; font-size:1.25rem; margin-bottom:0.5rem;">Diagram Panah: Relasi "Ibukota dari"</h2>
+                <p style="font-size:0.875rem; color:#64748b; margin-bottom:1.5rem;">Klik satu nama <b>Ibukota (Himpunan A)</b> lalu klik <b>Negara (Himpunan B)</b> pasangannya untuk menarik garis panah.</p>
+
+                <div class="panah-container" id="panah-container">
+                    <svg id="svg-panah" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:10;">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="7" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#4f46e5"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                    
+                    <div class="himpunan-box" style="background-color:#e0e7ff; border-color:#c7d2fe;">
+                        <h4 style="text-align:center; font-weight:bold; color:#312e81; border-bottom:1px solid #c7d2fe; padding-bottom:0.25rem;">Himpunan A (Ibukota)</h4>
+                        <div id="list-a" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
+                    </div>
+
+                    <div style="background-color:#e0e7ff; color:#3730a3; padding:0.25rem 0.75rem; border-radius:9999px; font-size:0.75rem; font-weight:600; z-index:20;">
+                        Ibukota dari ➔
+                    </div>
+
+                    <div class="himpunan-box">
+                        <h4 style="text-align:center; font-weight:bold; color:#1e293b; border-bottom:1px solid #e2e8f0; padding-bottom:0.25rem;">Himpunan B (Negara)</h4>
+                        <div id="list-b" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+                    <button onclick="resetPanah()" class="btn btn-slate">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Diagram Kartesius -->
+        <div id="section-kartesius" class="hidden">
+            <button onclick="showSection('home')" class="btn btn-slate" style="margin-bottom:1rem;">
+                ⬅️ Kembali ke Menu Utama
+            </button>
+            <div class="card">
+                <h2 style="font-weight:bold; font-size:1.25rem; margin-bottom:0.5rem;">Diagram Kartesius: Relasi "Ibukota dari"</h2>
+                <p style="font-size:0.875rem; color:#64748b; margin-bottom:1.5rem;">Klik titik koordinat perpotongan antara <b>Sumbu X (Ibukota)</b> dan <b>Sumbu Y (Negara)</b> untuk menghubungkan relasi.</p>
+
+                <div style="overflow-x:auto;">
+                    <div style="min-width:500px; display:flex; justify-content:center; padding:1rem 0;">
+                        <div id="kartesius-grid-container" style="position:relative; padding-left:7rem; padding-bottom:4rem; padding-top:1.5rem; border-left:2px solid #0f172a; border-bottom:2px solid #0f172a;">
+                            <svg id="svg-kartesius-lines" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:10;"></svg>
+                            <div id="kartesius-grid" style="display:grid; position:relative; z-index:20;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+                    <button onclick="resetKartesius()" class="btn btn-slate">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Pasangan Berurutan -->
+        <div id="section-pasangan" class="hidden">
+            <button onclick="showSection('home')" class="btn btn-slate" style="margin-bottom:1rem;">
+                ⬅️ Kembali ke Menu Utama
+            </button>
+            <div class="card">
+                <h2 style="font-weight:bold; font-size:1.25rem; margin-bottom:0.5rem;">Himpunan Pasangan Berurutan</h2>
+                <p style="font-size:0.875rem; color:#64748b; margin-bottom:1.5rem;">Lengkapi pasangan berurutan (x, y) di mana x ∈ Ibukota dan y ∈ Negara.</p>
+
+                <div id="pasangan-inputs" style="max-width:32rem; margin:0 auto; background-color:#f8fafc; padding:1.5rem; border-radius:0.75rem; border:1px solid #e2e8f0; display:flex; flex-direction:column; gap:1rem;"></div>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+                    <button onclick="resetPasangan()" class="btn btn-slate">Reset</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Evaluasi -->
+    <div id="modal-result" class="modal hidden">
+        <div class="modal-content">
+            <div id="modal-icon" style="width:4rem; height:4rem; border-radius:9999px; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem auto; font-size:1.5rem;"></div>
+            <h3 id="modal-title" style="font-size:1.25rem; font-weight:bold; margin-bottom:0.5rem;">Hasil Evaluasi</h3>
+            <div id="modal-body" style="font-size:0.875rem; color:#475569; margin-bottom:1.5rem;"></div>
+            <button onclick="closeModal()" class="btn btn-indigo" style="width:100%; padding:0.75rem;">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // URL Google Apps Script sudah ditanam secara permanen di sini
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWNOpuG2HQeasPgHo6eImzjYF5xP5ygtFzGe0TTnKwKuqijbIgQDtcAFhq7Ps53oEK/exec";
+
+        const dataMaster = [
+            { ibukota: 'Jakarta', negara: 'Indonesia' },
+            { ibukota: 'Tokyo', negara: 'Jepang' },
+            { ibukota: 'Paris', negara: 'Prancis' },
+            { ibukota: 'London', negara: 'Inggris' },
+            { ibukota: 'Canberra', negara: 'Australia' }
+        ];
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        let ibukotaList = [];
+        let negaraList = [];
+
+        let selectedA = null;
+        let connectionsPanah = []; 
+        let pointsKartesius = []; 
+
+        window.onload = function() {
+            initRandomData();
+            initPanah();
+            initKartesius();
+            initPasangan();
+
+            window.addEventListener('resize', () => {
+                drawPanahLines();
+                drawKartesiusLines();
+            });
+        };
+
+        function initRandomData() {
+            ibukotaList = shuffleArray(dataMaster.map(d => d.ibukota));
+            negaraList = shuffleArray(dataMaster.map(d => d.negara));
+        }
+
+        function showSection(id) {
+            ['home', 'panah', 'kartesius', 'pasangan'].forEach(s => {
+                document.getElementById(`section-${s}`).classList.add('hidden');
+            });
+            document.getElementById(`section-${id}`).classList.remove('hidden');
+            
+            setTimeout(() => {
+                if(id === 'panah') drawPanahLines();
+                if(id === 'kartesius') drawKartesiusLines();
+            }, 100);
+        }
+
+        // --- DIAGRAM PANAH ---
+        function initPanah() {
+            const listA = document.getElementById('list-a');
+            const listB = document.getElementById('list-b');
+            listA.innerHTML = '';
+            listB.innerHTML = '';
+
+            ibukotaList.forEach(ibu => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-item btn-a';
+                btn.innerText = ibu;
+                btn.onclick = () => selectA(ibu, btn);
+                listA.appendChild(btn);
+            });
+
+            negaraList.forEach(neg => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-item btn-b';
+                btn.innerText = neg;
+                btn.onclick = () => selectB(neg);
+                listB.appendChild(btn);
+            });
+        }
+
+        function selectA(ibukota, btn) {
+            selectedA = ibukota;
+            document.querySelectorAll('.btn-a').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function selectB(negara) {
+            if (!selectedA) return;
+            connectionsPanah = connectionsPanah.filter(c => c.from !== selectedA);
+            connectionsPanah.push({ from: selectedA, to: negara });
+            selectedA = null;
+            document.querySelectorAll('.btn-a').forEach(b => b.classList.remove('active'));
+            drawPanahLines();
+        }
+
+        function drawPanahLines() {
+            const svg = document.getElementById('svg-panah');
+            if(!svg) return;
+            
+            const defsHtml = `<defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="7" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#4f46e5"/>
+                </marker>
+            </defs>`;
+            svg.innerHTML = defsHtml;
+
+            const rectSvg = svg.getBoundingClientRect();
+
+            connectionsPanah.forEach(c => {
+                const btnA = Array.from(document.querySelectorAll('.btn-a')).find(b => b.innerText === c.from);
+                const btnB = Array.from(document.querySelectorAll('.btn-b')).find(b => b.innerText === c.to);
+
+                if (btnA && btnB) {
+                    const rA = btnA.getBoundingClientRect();
+                    const rB = btnB.getBoundingClientRect();
+
+                    const x1 = rA.right - rectSvg.left;
+                    const y1 = rA.top + rA.height / 2 - rectSvg.top;
+                    const x2 = rB.left - rectSvg.left;
+                    const y2 = rB.top + rB.height / 2 - rectSvg.top;
+
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', `M ${x1} ${y1} C ${x1 + 50} ${y1}, ${x2 - 50} ${y2}, ${x2} ${y2}`);
+                    path.setAttribute('stroke', '#4f46e5');
+                    path.setAttribute('stroke-width', '2.5');
+                    path.setAttribute('fill', 'none');
+                    path.setAttribute('marker-end', 'url(#arrowhead)');
+
+                    svg.appendChild(path);
+                }
+            });
+        }
+
+        function resetPanah() {
+            connectionsPanah = [];
+            initRandomData();
+            initPanah();
+            initKartesius();
+            initPasangan();
+            drawPanahLines();
+        }
+
+        // --- DIAGRAM KARTESIUS ---
+        function initKartesius() {
+            const grid = document.getElementById('kartesius-grid');
+            if(!grid) return;
+            grid.style.gridTemplateColumns = `repeat(${ibukotaList.length}, minmax(0, 1fr))`;
+            grid.style.gridTemplateRows = `repeat(${negaraList.length}, minmax(0, 1fr))`;
+            grid.innerHTML = '';
+
+            for (let y = negaraList.length - 1; y >= 0; y--) {
+                for (let x = 0; x < ibukotaList.length; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'kartesius-cell';
+                    cell.onclick = () => togglePoint(x, y);
+
+                    if (x === 0) {
+                        const lblY = document.createElement('span');
+                        lblY.style.cssText = 'position:absolute; left:-6rem; font-size:0.75rem; font-weight:bold; color:#334155; text-align:right; width:5.5rem;';
+                        lblY.innerText = negaraList[y];
+                        cell.appendChild(lblY);
+                    }
+                    if (y === 0) {
+                        const lblX = document.createElement('span');
+                        lblX.style.cssText = 'position:absolute; bottom:-2rem; font-size:0.75rem; font-weight:bold; color:#334155; text-align:center; width:100%; transform:rotate(-15deg);';
+                        lblX.innerText = ibukotaList[x];
+                        cell.appendChild(lblX);
+                    }
+
+                    const point = document.createElement('div');
+                    point.id = `pt-${x}-${y}`;
+                    point.className = 'dot hidden';
+                    cell.appendChild(point);
+
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function togglePoint(x, y) {
+            const idx = pointsKartesius.findIndex(p => p.x === x && p.y === y);
+            if (idx >= 0) {
+                pointsKartesius.splice(idx, 1);
+            } else {
+                pointsKartesius = pointsKartesius.filter(p => p.x !== x);
+                pointsKartesius.push({ x, y });
+            }
+            updateKartesiusUI();
+        }
+
+        function updateKartesiusUI() {
+            for (let y = 0; y < negaraList.length; y++) {
+                for (let x = 0; x < ibukotaList.length; x++) {
+                    const pt = document.getElementById(`pt-${x}-${y}`);
+                    if (pt) {
+                        const active = pointsKartesius.some(p => p.x === x && p.y === y);
+                        if (active) pt.classList.remove('hidden');
+                        else pt.classList.add('hidden');
+                    }
+                }
+            }
+            drawKartesiusLines();
+        }
+
+        function drawKartesiusLines() {
+            const svg = document.getElementById('svg-kartesius-lines');
+            if(!svg) return;
+            svg.innerHTML = '';
+            const container = document.getElementById('kartesius-grid-container');
+            if(!container) return;
+            const rectContainer = container.getBoundingClientRect();
+
+            pointsKartesius.forEach(p => {
+                const ptEl = document.getElementById(`pt-${p.x}-${p.y}`);
+                if (ptEl) {
+                    const r = ptEl.getBoundingClientRect();
+                    const cx = r.left + r.width / 2 - rectContainer.left;
+                    const cy = r.top + r.height / 2 - rectContainer.top;
+
+                    const lineV = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    lineV.setAttribute('x1', cx); lineV.setAttribute('y1', cy);
+                    lineV.setAttribute('x2', cx); lineV.setAttribute('y2', rectContainer.height - 64);
+                    lineV.setAttribute('stroke', '#10b981'); lineV.setAttribute('stroke-width', '2');
+                    lineV.setAttribute('stroke-dasharray', '4');
+
+                    const lineH = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    lineH.setAttribute('x1', cx); lineH.setAttribute('y1', cy);
+                    lineH.setAttribute('x2', 112); lineH.setAttribute('y2', cy);
+                    lineH.setAttribute('stroke', '#10b981'); lineH.setAttribute('stroke-width', '2');
+                    lineH.setAttribute('stroke-dasharray', '4');
+
+                    svg.appendChild(lineV);
+                    svg.appendChild(lineH);
+                }
+            });
+        }
+
+        function resetKartesius() {
+            pointsKartesius = [];
+            initRandomData();
+            initPanah();
+            initKartesius();
+            initPasangan();
+            updateKartesiusUI();
+        }
+
+        // --- PASANGAN BERURUTAN ---
+        function initPasangan() {
+            const container = document.getElementById('pasangan-inputs');
+            if(!container) return;
+            container.innerHTML = '';
+
+            ibukotaList.forEach((ibu, idx) => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; font-weight:600; color:#334155;';
+                row.innerHTML = `
+                    <span>( ${ibu} , </span>
+                    <select id="sel-pasangan-${idx}" class="input-control" style="flex:1;">
+                        <option value="">-- Pilih Negara --</option>
+                        ${negaraList.map(n => `<option value="${n}">${n}</option>`).join('')}
+                    </select>
+                    <span>)</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function resetPasangan() {
+            ibukotaList.forEach((_, idx) => {
+                document.getElementById(`sel-pasangan-${idx}`).value = '';
+            });
+        }
+
+        // --- EVALUASI & SUBMIT ---
+        function periksaSemuaJawaban() {
+            const nama = document.getElementById('input-nama').value.trim();
+            const kelas = document.getElementById('input-kelas').value.trim();
+
+            if (!nama || !kelas) {
+                alert('Harap isi Nama dan Kelas terlebih dahulu di menu utama!');
+                showSection('home');
+                return;
+            }
+
+            // Hitung Skor Panah
+            let skorPanah = 0;
+            connectionsPanah.forEach(c => {
+                const match = dataMaster.find(d => d.ibukota === c.from && d.negara === c.to);
+                if (match) skorPanah += 20;
+            });
+
+            // Hitung Skor Kartesius
+            let skorKartesius = 0;
+            pointsKartesius.forEach(p => {
+                const ibu = ibukotaList[p.x];
+                const neg = negaraList[p.y];
+                const match = dataMaster.find(d => d.ibukota === ibu && d.negara === neg);
+                if (match) skorKartesius += 20;
+            });
+
+            // Hitung Skor Pasangan
+            let skorPasangan = 0;
+            ibukotaList.forEach((ibu, idx) => {
+                const val = document.getElementById(`sel-pasangan-${idx}`).value;
+                const match = dataMaster.find(d => d.ibukota === ibu && d.negara === val);
+                if (match) skorPasangan += 20;
+            });
+
+            const totalSkor = Math.round((skorPanah + skorKartesius + skorPasangan) / 3);
+
+            // Tampilkan Modal Result
+            const modal = document.getElementById('modal-result');
+            const icon = document.getElementById('modal-icon');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+
+            if (totalSkor === 100) {
+                icon.style.backgroundColor = '#d1fae5'; icon.style.color = '#059669';
+                icon.innerHTML = '🏆';
+                title.innerText = 'Sempurna!';
+            } else {
+                icon.style.backgroundColor = '#fef3c7'; icon.style.color = '#d97706';
+                icon.innerHTML = '⭐';
+                title.innerText = 'Hasil Evaluasi';
+            }
+
+            body.innerHTML = `
+                <p style="font-weight:bold; color:#1e293b; margin-bottom:0.5rem;">${nama} (${kelas})</p>
+                <div style="background-color:#f1f5f9; padding:0.75rem; border-radius:0.5rem; text-align:left; font-size:0.75rem; font-family:monospace; margin-bottom:0.75rem;">
+                    <p>Skor Diagram Panah     : ${skorPanah}/100</p>
+                    <p>Skor Diagram Kartesius : ${skorKartesius}/100</p>
+                    <p>Skor Pasangan Berurutan: ${skorPasangan}/100</p>
+                    <hr style="margin:0.5rem 0; border:none; border-top:1px solid #cbd5e1;">
+                    <p style="font-weight:bold; color:#4f46e5; font-size:0.875rem;">Rata-Rata Total      : ${totalSkor}/100</p>
+                </div>
+                <p id="send-status" style="font-size:0.75rem; color:#94a3b8;">Mengirim data ke Google Sheets...</p>
+            `;
+
+            modal.classList.remove('hidden');
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    timestamp: new Date().toLocaleString('id-ID'),
+                    nama,
+                    kelas,
+                    skorPanah,
+                    skorKartesius,
+                    skorPasangan,
+                    totalSkor
+                })
+            }).then(() => {
+                document.getElementById('send-status').innerText = '✅ Data berhasil terkirim ke Google Sheets!';
+                document.getElementById('send-status').style.color = '#059669';
+            }).catch(err => {
+                document.getElementById('send-status').innerText = '⚠️ Gagal mengirim data. Cek koneksi internet.';
+                document.getElementById('send-status').style.color = '#e11d48';
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modal-result').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
